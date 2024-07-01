@@ -1,7 +1,7 @@
 #include <locale.h>
 #include <iostream>
 #include <vector>
-#include <ncursesw/ncurses.h>
+#include <ncursesw/curses.h>
 #include <random>
 #include <algorithm>
 using namespace std;
@@ -77,8 +77,10 @@ class Board{
 
         Shuffle();
         Deal(3,players,deck);
+        drawPlayers(play);
         drawBoard(play);
         drawHand(hand);
+        drawOpponentHands(play);
 
         wrefresh(play);
         wrefresh(hand);
@@ -94,6 +96,22 @@ class Board{
         delwin(hand);
         endwin();
 
+    }
+
+    void drawPlayers(WINDOW *play){
+
+        for(int i = 1; i < players.size(); ++i){
+            mvwprintw(play,1,playSpace.width/(players.size()*2-1)*(i*2-1),"Player %d",i);
+        } 
+
+    }
+
+    void drawOpponentHands(WINDOW *play){
+        for(int i = 1; i < players.size(); ++i){
+            for(int j =0; j < players.at(i).handCards.size(); ++j){
+                mvwprintw(play,2,playSpace.width/(players.size()*2-1)*(i*2-1)+1+j*2,cardBack);
+            }
+        } 
     }
 
     void Shuffle(){
@@ -121,9 +139,6 @@ class Board{
         if(deck.size() > 0) mvwprintw(play,playSpace.height/2,playSpace.width/2-1,cardBack);
         mvwprintw(play,playSpace.height/2,playSpace.width/2+1,inPlay.sym);
 
-        //for(int i = 1; players.size() > i; ++i) 
-
-
     }
 
     void drawHand(WINDOW *hand){
@@ -140,7 +155,7 @@ int main(int argc, char ** argv){
     setlocale(LC_ALL, "");
     initscr();
 
-    Board board(4);
+    Board board(5);
     
     getch();
 

@@ -1,6 +1,6 @@
 CC = g++
 
-CFLAGS = -g -Wall
+CFLAGS = -g -Wall -Wvla
 
 all:
 	g++ 31.cc -lncursesw -o test
