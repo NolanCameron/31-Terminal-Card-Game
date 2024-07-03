@@ -25,6 +25,8 @@ struct{
     int y = playSpace.y + 14;
 }handSpace;
 
+
+
 struct Card{
     suite s;
     face f;
@@ -35,9 +37,14 @@ struct Card{
 class Player{
 
     public:
-        vector<Card> handCards;
 
-    Player(){}
+        vector<Card> handCards;
+        struct{
+            int x;
+            int y;
+        }handarea;
+        
+    Player(int y,int x){handarea.y = y; handarea.x = x;}
 
     void Draw(Card card){
 
@@ -64,7 +71,9 @@ class Board{
             deck.push_back({suite(i),face(j),sym[i*13+j],j>10 ? 10 : j});
         }
         
-        players.resize(numPlayers);
+        Player mainPlayer(handSpace.height/2-1,(handSpace.width-6)/2);
+        players.push_back(mainPlayer);
+        for(int i =1; i < numPlayers; ++i){players.push_back(Player(2,playSpace.width/(players.size()*2-1)*(i*2-1)));}
 
         WINDOW *play = newwin(playSpace.height, playSpace.width, playSpace.y,playSpace.x);
         WINDOW *hand = newwin(handSpace.height, handSpace.width, handSpace.y,handSpace.x);
@@ -109,7 +118,7 @@ class Board{
     void drawOpponentHands(WINDOW *play){
         for(int i = 1; i < players.size(); ++i){
             for(int j =0; j < players.at(i).handCards.size(); ++j){
-                mvwprintw(play,2,playSpace.width/(players.size()*2-1)*(i*2-1)+1+j*2,cardBack);
+                mvwprintw(play,players.at(i).handarea.y,players.at(i).handarea.x+1+j*2,cardBack);
             }
         } 
     }
@@ -154,6 +163,7 @@ int main(int argc, char ** argv){
 
     setlocale(LC_ALL, "");
     initscr();
+    curs_set(0);
 
     Board board(5);
     
