@@ -10,6 +10,19 @@ enum face{A,TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, JACK, QUEEN, K
 enum suite{DIAMONDS, SPADES, CLUBS, HEARTS};
 const char* sym[] = {"🃁","🃂","🃃","🃄","🃅","🃆","🃇","🃈","🃉","🃊","🃋","🃍","🃎","🂡","🂢","🂣","🂤","🂥","🂦","🂧","🂨","🂩","🂪","🂫","🂭","🂮","🃑","🃒","🃓","🃔","🃕","🃖","🃗","🃘","🃙","🃚","🃛","🃝","🃞","🂱","🂲","🂳","🂴","🂵","🂶","🂷","🂸","🂹","🂺","🂻","🂽","🂾"};
 const char* cardBack = "🂠";
+const char* selector = "⮝"
+
+struct coord{
+    int y,x;
+    coord(int i = 0; int j = 0){
+        y = i;
+        x = j;
+    }
+    coord(coord c){
+        y = c.y;
+        x = c.x;
+    }
+}
 
 struct{
     int height = 14;
@@ -25,7 +38,17 @@ struct{
     int y = playSpace.y + 14;
 }handSpace;
 
+coord deckPostion(playSpace.height/2,playSpace.width/2-1);
+coord discardPostion(playSpace.height/2,playSpace.width/2+1);
 
+struct{
+    coord deck(deckPostion.y+1,deckPostion.x);
+    coord discard(discardPostion.y +1,discardPostion.x);
+    coord card1
+    coord card2
+    coord card3
+    coord card4
+}selectorPosition;
 
 struct Card{
     suite s;
@@ -118,7 +141,7 @@ class Board{
     void drawOpponentHands(WINDOW *play){
         for(int i = 1; i < players.size(); ++i){
             for(int j =0; j < players.at(i).handCards.size(); ++j){
-                mvwprintw(play,players.at(i).handarea.y,players.at(i).handarea.x+1+j*2,cardBack);
+                mvwprintw(play, players.at(i).handarea.y, players.at(i).handarea.x+1+j*2,cardBack);
             }
         } 
     }
@@ -145,8 +168,8 @@ class Board{
 
     void drawBoard(WINDOW *play){
 
-        if(deck.size() > 0) mvwprintw(play,playSpace.height/2,playSpace.width/2-1,cardBack);
-        mvwprintw(play,playSpace.height/2,playSpace.width/2+1,inPlay.sym);
+        if(deck.size() > 0) mvwprintw(play,deckPostion.y,deckPostion.x,cardBack);
+        mvwprintw(play,discardPostion.y,discardPostion.x,inPlay.sym);
 
     }
 
