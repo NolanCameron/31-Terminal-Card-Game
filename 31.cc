@@ -10,19 +10,15 @@ enum face{A,TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, JACK, QUEEN, K
 enum suite{DIAMONDS, SPADES, CLUBS, HEARTS};
 const char* sym[] = {"🃁","🃂","🃃","🃄","🃅","🃆","🃇","🃈","🃉","🃊","🃋","🃍","🃎","🂡","🂢","🂣","🂤","🂥","🂦","🂧","🂨","🂩","🂪","🂫","🂭","🂮","🃑","🃒","🃓","🃔","🃕","🃖","🃗","🃘","🃙","🃚","🃛","🃝","🃞","🂱","🂲","🂳","🂴","🂵","🂶","🂷","🂸","🂹","🂺","🂻","🂽","🂾"};
 const char* cardBack = "🂠";
-const char* selector = "⮝"
+const char* selector = "⮝";
 
 struct coord{
     int y,x;
-    coord(int i = 0; int j = 0){
-        y = i;
-        x = j;
+    coord(int j = 0, int i = 0){
+        y = j;
+        x = i;
     }
-    coord(coord c){
-        y = c.y;
-        x = c.x;
-    }
-}
+};
 
 struct{
     int height = 14;
@@ -38,16 +34,23 @@ struct{
     int y = playSpace.y + 14;
 }handSpace;
 
+struct{
+    coord card1(handSpace.height/2,(handSpace.width-6)/2);
+    coord card2(handSpace.height/2,(handSpace.width-6)/2 + 2);
+    coord card3(handSpace.height/2,(handSpace.width-6)/2 + 4);
+    coord card4(handSpace.height/2,(handSpace.width-6)/2 + 6);
+}cardSpace;
+
 coord deckPostion(playSpace.height/2,playSpace.width/2-1);
 coord discardPostion(playSpace.height/2,playSpace.width/2+1);
 
 struct{
-    coord deck(deckPostion.y+1,deckPostion.x);
-    coord discard(discardPostion.y +1,discardPostion.x);
-    coord card1
-    coord card2
-    coord card3
-    coord card4
+    coord deck(deckPostion.y + 1,deckPostion.x);
+    coord discard(discardPostion.y + 1,discardPostion.x);
+    coord card1(handSpace.card1.y + 1,handSpace.card1.x);
+    coord card2(handSpace.card1.y + 1,handSpace.card1.x);
+    coord card3(handSpace.card1.y + 1,handSpace.card1.x);
+    coord card4(handSpace.card1.y + 1,handSpace.card1.x);
 }selectorPosition;
 
 struct Card{
@@ -70,9 +73,7 @@ class Player{
     Player(int y,int x){handarea.y = y; handarea.x = x;}
 
     void Draw(Card card){
-
         handCards.push_back(card);
-
     }
 
 };
@@ -90,9 +91,7 @@ class Board{
 
     Board(int numPlayers){
 
-        for(int i =0; i < 4; ++i) for(int j = 0; j < 13; ++j){
-            deck.push_back({suite(i),face(j),sym[i*13+j],j>10 ? 10 : j});
-        }
+        initDeck();
         
         Player mainPlayer(handSpace.height/2-1,(handSpace.width-6)/2);
         players.push_back(mainPlayer);
@@ -128,6 +127,12 @@ class Board{
         delwin(hand);
         endwin();
 
+    }
+
+    void initDeck(){
+        for(int i =0; i < 4; ++i) for(int j = 0; j < 13; ++j){
+            deck.push_back({suite(i),face(j),sym[i*13+j],j>10 ? 10 : j});
+        }
     }
 
     void drawPlayers(WINDOW *play){
@@ -176,6 +181,10 @@ class Board{
     void drawHand(WINDOW *hand){
 
         for(int i = 0; i < players.at(0).handCards.size(); ++i) mvwprintw(hand,handSpace.height/2-1,(handSpace.width-6)/2 +i*2,players.at(0).handCards.at(i).sym);
+
+    }
+
+    void moveSelector(coord Position){
 
     }
 
