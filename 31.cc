@@ -11,47 +11,31 @@ enum suite{DIAMONDS, SPADES, CLUBS, HEARTS};
 const char* sym[] = {"🃁","🃂","🃃","🃄","🃅","🃆","🃇","🃈","🃉","🃊","🃋","🃍","🃎","🂡","🂢","🂣","🂤","🂥","🂦","🂧","🂨","🂩","🂪","🂫","🂭","🂮","🃑","🃒","🃓","🃔","🃕","🃖","🃗","🃘","🃙","🃚","🃛","🃝","🃞","🂱","🂲","🂳","🂴","🂵","🂶","🂷","🂸","🂹","🂺","🂻","🂽","🂾"};
 const char* cardBack = "🂠";
 const char* selector = "⮝";
+enum positions{discard,deck,card1,card2,card3,card4};
 
 struct coord{
     int y,x;
-    coord(int j = 0, int i = 0){
-        y = j;
-        x = i;
-    }
+    coord(int j = 0, int i = 0): y(j), x(i){}
 };
 
-struct{
-    int height = 14;
-    int width = 68;
-    int x = 1;
-    int y = 0;
-}playSpace;
+struct windowSpace{
+    int height;
+    int width;
+    int x;
+    int y;
+    windowSpace(int h,int w,int j, int i): height(h), width(w), x(i), y(j){}
+};
 
-struct{
-    int height = playSpace.height - 10;
-    int width = playSpace.width - 34;
-    int x = playSpace.x + 17;
-    int y = playSpace.y + 14;
-}handSpace;
+struct cardPositions{
+    vector<coord> cardCoords;
+    cardPositions(coord firstPosition){for(int i = 0; i < 4; ++i){cardCoords.push_back(coord(firstPosition.y, firstPosition.x + i*2));}}
+};
 
-struct{
-    coord card1(handSpace.height/2,(handSpace.width-6)/2);
-    coord card2(handSpace.height/2,(handSpace.width-6)/2 + 2);
-    coord card3(handSpace.height/2,(handSpace.width-6)/2 + 4);
-    coord card4(handSpace.height/2,(handSpace.width-6)/2 + 6);
-}cardSpace;
+windowSpace playSpace(14,68,0,1);
+windowSpace handSpace(playSpace.height - 10,playSpace.width - 34,playSpace.y + 14,playSpace.x + 17);
 
 coord deckPostion(playSpace.height/2,playSpace.width/2-1);
 coord discardPostion(playSpace.height/2,playSpace.width/2+1);
-
-struct{
-    coord deck(deckPostion.y + 1,deckPostion.x);
-    coord discard(discardPostion.y + 1,discardPostion.x);
-    coord card1(handSpace.card1.y + 1,handSpace.card1.x);
-    coord card2(handSpace.card1.y + 1,handSpace.card1.x);
-    coord card3(handSpace.card1.y + 1,handSpace.card1.x);
-    coord card4(handSpace.card1.y + 1,handSpace.card1.x);
-}selectorPosition;
 
 struct Card{
     suite s;
@@ -60,17 +44,12 @@ struct Card{
     int val;
 };
 
-class Player{
+struct Player{
 
-    public:
-
-        vector<Card> handCards;
-        struct{
-            int x;
-            int y;
-        }handarea;
+    vector<Card> handCards;
+    cardPositions handArea;
         
-    Player(int y,int x){handarea.y = y; handarea.x = x;}
+    Player(int y, int x): handArea(coord(y,x)){}
 
     void Draw(Card card){
         handCards.push_back(card);
@@ -88,17 +67,13 @@ class Board{
         Card inPlay;
         WINDOW *play;
         WINDOW *hand;
+        coord currentSelectorPosition;
 
-    Board(int numPlayers){
+    Board(int numPlayers): play(newwin(playSpace.height, playSpace.width, playSpace.y, playSpace.x)), hand(newwin(handSpace.height, handSpace.width, handSpace.y, handSpace.x)){
 
         initDeck();
-        
-        Player mainPlayer(handSpace.height/2-1,(handSpace.width-6)/2);
-        players.push_back(mainPlayer);
-        for(int i =1; i < numPlayers; ++i){players.push_back(Player(2,playSpace.width/(players.size()*2-1)*(i*2-1)));}
-
-        WINDOW *play = newwin(playSpace.height, playSpace.width, playSpace.y,playSpace.x);
-        WINDOW *hand = newwin(handSpace.height, handSpace.width, handSpace.y,handSpace.x);
+        players.push_back(Player(handSpace.height/2-1,(handSpace.width-6)/2));
+        for(int i = 1; i < numPlayers; ++i){players.push_back(Player(2,playSpace.width/(players.size()*2-1)*(i*2-1)));}
 
         refresh();
         box(play,0,0);
@@ -145,8 +120,8 @@ class Board{
 
     void drawOpponentHands(WINDOW *play){
         for(int i = 1; i < players.size(); ++i){
-            for(int j =0; j < players.at(i).handCards.size(); ++j){
-                mvwprintw(play, players.at(i).handarea.y, players.at(i).handarea.x+1+j*2,cardBack);
+            for(int j = 0; j < players.at(i).handCards.size(); ++j){
+                mvwprintw(play, players.at(i).handArea.cardCoords.at(j).y, players.at(i).handArea.cardCoords.at(j).x, cardBack);
             }
         } 
     }
@@ -180,7 +155,7 @@ class Board{
 
     void drawHand(WINDOW *hand){
 
-        for(int i = 0; i < players.at(0).handCards.size(); ++i) mvwprintw(hand,handSpace.height/2-1,(handSpace.width-6)/2 +i*2,players.at(0).handCards.at(i).sym);
+        for(int i = 0; i < players.at(0).handCards.size(); ++i) mvwprintw(hand, players.at(0).handArea.cardCoords.at(i).y, players.at(0).handArea.cardCoords.at(i).x, players.at(0).handCards.at(i).sym);
 
     }
 
