@@ -13,9 +13,9 @@ const char* cardBack = "🂠";
 const char* selector = "⮝";
 enum positions{discard,deck,card1,card2,card3,card4};
 
-struct coord{
+struct Coord{
     int y,x;
-    coord(int j = 0, int i = 0): y(j), x(i){}
+    Coord(int j = 0, int i = 0): y(j), x(i){}
 };
 
 struct windowSpace{
@@ -27,15 +27,15 @@ struct windowSpace{
 };
 
 struct cardPositions{
-    vector<coord> cardCoords;
-    cardPositions(coord firstPosition){for(int i = 0; i < 4; ++i){cardCoords.push_back(coord(firstPosition.y, firstPosition.x + i*2));}}
+    vector<Coord> cardCoords;
+    cardPositions(Coord firstPosition){for(int i = 0; i < 4; ++i){cardCoords.push_back(Coord(firstPosition.y, firstPosition.x + i*2));}}
 };
 
 windowSpace playSpace(14,68,0,1);
 windowSpace handSpace(playSpace.height - 10,playSpace.width - 34,playSpace.y + 14,playSpace.x + 17);
 
-coord deckPostion(playSpace.height/2,playSpace.width/2-1);
-coord discardPostion(playSpace.height/2,playSpace.width/2+1);
+Coord deckPostion(playSpace.height/2,playSpace.width/2-1);
+Coord discardPostion(playSpace.height/2,playSpace.width/2+1);
 
 struct Card{
     suite s;
@@ -48,8 +48,9 @@ struct Player{
 
     vector<Card> handCards;
     cardPositions handArea;
+    int score;
         
-    Player(int y, int x): handArea(coord(y,x)){}
+    Player(int y, int x): handArea(Coord(y,x)), score(0){}
 
     void Draw(Card card){
         handCards.push_back(card);
@@ -59,50 +60,15 @@ struct Player{
 
 class Board{
 
-    public:
-
-        vector<Card> deck;
-        vector<Card> discard;
-        vector<Player> players;
-        Card inPlay;
-        WINDOW *play;
-        WINDOW *hand;
-        coord currentSelectorPosition;
-
-    Board(int numPlayers): play(newwin(playSpace.height, playSpace.width, playSpace.y, playSpace.x)), hand(newwin(handSpace.height, handSpace.width, handSpace.y, handSpace.x)){
-
-        initDeck();
-        players.push_back(Player(handSpace.height/2-1,(handSpace.width-6)/2));
-        for(int i = 1; i < numPlayers; ++i){players.push_back(Player(2,playSpace.width/(players.size()*2-1)*(i*2-1)));}
-
-        refresh();
-        box(play,0,0);
-        box(hand,0,0);
-        wprintw(play,"31");
-        wprintw(hand,"Hand");
-
-        Shuffle();
-        Deal(3,players,deck);
-        drawPlayers(play);
-        drawBoard(play);
-        drawHand(hand);
-        drawOpponentHands(play);
-
-        wrefresh(play);
-        wrefresh(hand);
-
-        wgetch(hand);
-        wgetch(play);
-
-    }
-
-    ~Board(){
-
-        delwin(play);
-        delwin(hand);
-        endwin();
-
-    }
+    int numPlayers;
+    vector<Card> deck;
+    vector<Card> discard;
+    vector<Player> players;
+    Card inPlay;
+    WINDOW *play;
+    WINDOW *hand;
+    Coord playSelectorPosition;
+    Coord handSelectorPosition;
 
     void initDeck(){
         for(int i =0; i < 4; ++i) for(int j = 0; j < 13; ++j){
@@ -110,7 +76,7 @@ class Board{
         }
     }
 
-    void drawPlayers(WINDOW *play){
+    void drawPlayers(){
 
         for(int i = 1; i < players.size(); ++i){
             mvwprintw(play,1,playSpace.width/(players.size()*2-1)*(i*2-1),"Player %d",i);
@@ -118,7 +84,7 @@ class Board{
 
     }
 
-    void drawOpponentHands(WINDOW *play){
+    void drawOpponentHands(){
         for(int i = 1; i < players.size(); ++i){
             for(int j = 0; j < players.at(i).handCards.size(); ++j){
                 mvwprintw(play, players.at(i).handArea.cardCoords.at(j).y, players.at(i).handArea.cardCoords.at(j).x, cardBack);
@@ -134,7 +100,7 @@ class Board{
         
     }
 
-    void Deal(int amountCards,vector<Player>& players,vector<Card>& deck){
+    void Deal(int amountCards){
 
         for(int j = 0; j < amountCards; ++j) for(int i = 0; i < players.size(); ++i){
             players.at(i).Draw(deck.back());
@@ -146,25 +112,76 @@ class Board{
 
     }
 
-    void drawBoard(WINDOW *play){
+    void drawBoard(){
 
         if(deck.size() > 0) mvwprintw(play,deckPostion.y,deckPostion.x,cardBack);
         mvwprintw(play,discardPostion.y,discardPostion.x,inPlay.sym);
 
     }
 
-    void drawHand(WINDOW *hand){
+    void drawHand(){
 
         for(int i = 0; i < players.at(0).handCards.size(); ++i) mvwprintw(hand, players.at(0).handArea.cardCoords.at(i).y, players.at(0).handArea.cardCoords.at(i).x, players.at(0).handCards.at(i).sym);
 
     }
 
-    void moveSelector(coord Position){
+    public:
+        Board(int);
+        ~Board();
+        void movePlaySelector(Coord);
+        void moveHandSelector(Coord);
 
-    }
 
 };
 
+Board::Board(int numPlayers): play(newwin(playSpace.height, playSpace.width, playSpace.y, playSpace.x)), hand(newwin(handSpace.height, handSpace.width, handSpace.y, handSpace.x)), numPlayers(numPlayers), handSelectorPosition(Coord(0,0)), playSelectorPosition(Coord(0,0)){
+
+        initDeck();
+        players.push_back(Player(handSpace.height/2-1,(handSpace.width-6)/2));
+        for(int i = 1; i < numPlayers; ++i){players.push_back(Player(2,playSpace.width/(numPlayers*2-1)*(2*i-1)));}
+
+        refresh();
+        box(play,0,0);
+        box(hand,0,0);
+        wprintw(play,"31");
+        wprintw(hand,"Hand");
+
+        Shuffle();
+        Deal(3);
+        drawPlayers();
+        drawBoard();
+        drawHand();
+        drawOpponentHands();
+
+        moveHandSelector(players.at(0).)
+
+        wrefresh(play);
+        wrefresh(hand);
+
+        wgetch(hand);
+        wgetch(play);
+
+}
+
+Board::~Board(){
+
+        delwin(play);
+        delwin(hand);
+        endwin();
+
+}
+
+void Board::moveHandSelector(Coord Position){
+        mvwdelch(play,handSelectorPosition.y, handSelectorPosition.x);
+        handSelectorPosition = Position;
+        mvwprintw(play, handSelectorPosition.y, handSelectorPosition.x, selector);
+}
+
+void Board::movePlaySelector(Coord Position){
+        mvwdelch(play,playSelectorPosition.y, playSelectorPosition.x);
+        playSelectorPosition = Position;
+        mvwprintw(play, playSelectorPosition.y, playSelectorPosition.x, selector);
+}
 
 int main(int argc, char ** argv){
 
