@@ -4,7 +4,9 @@
 #include <ncursesw/curses.h>
 #include <random>
 #include <algorithm>
-using namespace std;
+#include <board.h>
+#include <player.h>
+
 
 enum face{A,TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, JACK, QUEEN, KING};
 enum suite{DIAMONDS, SPADES, CLUBS, HEARTS};
@@ -27,7 +29,7 @@ struct windowSpace{
 };
 
 struct cardPositions{
-    vector<Coord> cardCoords;
+    std::vector<Coord> cardCoords;
     cardPositions(Coord firstPosition){for(int i = 0; i < 4; ++i){cardCoords.push_back(Coord(firstPosition.y, firstPosition.x + i*2));}}
 };
 
@@ -44,34 +46,60 @@ struct Card{
     int val;
 };
 
-struct Player{
+class Player{
 
-    vector<Card> handCards;
+    std::vector<Card> handCards;
     cardPositions handArea;
     int score;
-        
-    Player(int y, int x): handArea(Coord(y,x)), score(0){}
 
-    void Draw(Card card){
-        handCards.push_back(card);
-    }
+    friend class Board;
 
+    public:
+
+        Player(int y, int x): handArea(Coord(y,x)), score(0){}
+
+        void drawFromDeck(Board& board){
+            handCards.push_back(board.deck.back());
+            board.deck.pop_back();
+        }
+
+        void drawFromDiscard(Board& board){
+            handCards.push_back(board.discard.back());
+            board.discard.pop_back();
+        }
+
+        int getScore(){
+            return score;
+        }
+
+        int calculateScore(){
+            int suiteScore [4];
+            for(int i = 0; i < 4; ++i) for(int j = 0; j < handCards.size(); ++j){
+                if(suite(i) == handCards.at(j).suite){
+                    suiteScore[i] += handCards.at(j).val;
+                }
+            }
+
+            return std::max_element(suiteScore,suiteScore+4);
+
+        }
 };
 
 class Board{
 
     int numPlayers;
-    vector<Card> deck;
-    vector<Card> discard;
-    vector<Player> players;
-    Card inPlay;
+    std::vector<Card> deck;
+    std::vector<Card> discard;
+    std::vector<Player> players;
     WINDOW *play;
     WINDOW *hand;
     Coord playSelectorPosition;
     Coord handSelectorPosition;
 
+    friend class Player;
+
     void initDeck(){
-        for(int i =0; i < 4; ++i) for(int j = 0; j < 13; ++j){
+        for(int i = 0; i < 4; ++i) for(int j = 0; j < 13; ++j){
             deck.push_back({suite(i),face(j),sym[i*13+j],j>10 ? 10 : j});
         }
     }
@@ -103,19 +131,19 @@ class Board{
     void Deal(int amountCards){
 
         for(int j = 0; j < amountCards; ++j) for(int i = 0; i < players.size(); ++i){
-            players.at(i).Draw(deck.back());
-            deck.pop_back();
+            players.at(i).drawFromDeck(*this);
         }
 
-        inPlay = deck.back();
+        discard.push_back(deck.back());
         deck.pop_back();
 
     }
 
     void drawBoard(){
 
-        if(deck.size() > 0) mvwprintw(play,deckPostion.y,deckPostion.x,cardBack);
-        mvwprintw(play,discardPostion.y,discardPostion.x,inPlay.sym);
+        if(deck.size() > 0) mvwprintw(play, deckPostion.y, deckPostion.x, cardBack);
+        if(discard.size() != 0) {mvwprintw(play, discardPostion.y, discardPostion.x, discard.back());}
+        else{mvwdelch(play, discardPostion.y, discardPostion.x);}
 
     }
 
@@ -153,8 +181,6 @@ Board::Board(int numPlayers): play(newwin(playSpace.height, playSpace.width, pla
         drawHand();
         drawOpponentHands();
 
-        moveHandSelector(players.at(0).)
-
         wrefresh(play);
         wrefresh(hand);
 
@@ -182,6 +208,10 @@ void Board::movePlaySelector(Coord Position){
         playSelectorPosition = Position;
         mvwprintw(play, playSelectorPosition.y, playSelectorPosition.x, selector);
 }
+
+class Game{
+
+};
 
 int main(int argc, char ** argv){
 
