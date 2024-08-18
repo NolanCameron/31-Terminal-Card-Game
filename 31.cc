@@ -1,14 +1,9 @@
 #include <locale.h>
 #include <iostream>
-#include <vector>
-#include <ncursesw/curses.h>
-#include <random>
-#include <algorithm>
-#include <board.h>
-#include <player.h>
-#include <rectangleArea.h>
+#include <ncursesw/ncurses.h>
+#include "31.h"
+#include "rectangleArea.h"
 
-enum positions{discard,deck,card1,card2,card3,card4};
 
 rectangleArea playSpace(14,68,0,1);
 rectangleArea handSpace(playSpace.height - 10,playSpace.width - 34,playSpace.y + 14,playSpace.x + 17);

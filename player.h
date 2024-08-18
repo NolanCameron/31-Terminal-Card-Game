@@ -1,18 +1,44 @@
+#pragma once
 #include <vector>
+#include "coord.h"
+#include <ncursesw/curses.h>
+#include "rectangleArea.h"
+#include "card.h"
+#include <algorithm>
+#include "board.h"
+
+class Board;
 
 class Player{
 
-    std::vector<Card> handCards;
-    std::vector<Coord> cardPositions;
-    int score;
+    protected:
 
-    friend class Board;
+        std::vector<Card> handCards;
+        std::vector<Coord> cardPositions;
+        int score;
+
+        friend class Board;
 
     public:
 
-        Player(int y, int x);
-        void drawFromDeck(Board& board);
-        void drawFromDiscard(Board& board);
-        int getScore();
-        int calculateScore();
+        Player(int, int);
+        void drawFromDeck(Board&);
+        void drawFromDiscard(Board&);
+        void discardCard(Board&, int);
+        float getScore();
+        float calculateScore();
+};
+
+class Opponent:Player{
+
+    private:
+
+        void chooseDraw(Board&);
+        void chooseDiscard(Board&);
+        float calculateHand(std::vector<Card>);
+
+    public:
+
+        void makeMove(int, Board&);
+
 };

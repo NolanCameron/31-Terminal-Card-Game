@@ -1,10 +1,15 @@
-CC = g++
+CXX = g++
 
-CFLAGS = -g -Wall -Wvla
+CXXFLAGS = -std=c++20 -g -Wall -Wvla -lncursesw
 
-all:
-	g++ 31.cc -lncursesw -o test
-	./test
+objects = board.o player.o 31.o
+
+all: $(objects)
+	$(CXX) $(CXXFLAGS) $^ -o 31
+	./31
+
+$(objects): %.o: %.cc
+	$(CXX) $(CXXFLAGS) -c $^ -o $@
 
 clean:
-	rm ./test
+	rm ./31

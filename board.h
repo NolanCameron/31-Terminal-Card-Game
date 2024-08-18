@@ -1,10 +1,14 @@
 #pragma once
 #include <vector>
+#include "coord.h"
+#include "rectangleArea.h"
+#include <random>
+#include <algorithm>
+#include "card.h"
 #include <ncursesw/curses.h>
-#include <coord.h>
-#include <player.h>
-#include <card.h>
-#include <rectangleArea.h>
+#include "player.h"
+
+class Player;
 
 class Board{
 
@@ -13,8 +17,8 @@ class Board{
         std::vector<Card> deck;
         std::vector<Card> discard;
         std::vector<Player> players;
-        WINDOW *play;
-        WINDOW *hand;
+        WINDOW *playWindow;
+        WINDOW *handWindow;
         Coord playSelectorPosition;
         Coord handSelectorPosition;
         rectangleArea playSpace;
@@ -23,6 +27,7 @@ class Board{
         Coord discardPosition;
 
         friend class Player;
+        friend class Opponent;
 
     public:
         Board(int, rectangleArea, rectangleArea);
