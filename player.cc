@@ -57,7 +57,7 @@ void Opponent::chooseDraw(Board& board){
 float Opponent::calculateHand(std::vector<Card> hand){
 
     int suiteScore [4];
-    for(int i = 0; i < 4; ++i) for(int j = 0; j < handCards.size(); ++j){
+    for(int i = 0; i < 4; ++i) for(int j = 0; j < (int)handCards.size(); ++j){
         if(suite(i) == handCards.at(j).s){
             suiteScore[i] += handCards.at(j).val;
         }
@@ -72,10 +72,21 @@ float Opponent::calculateHand(std::vector<Card> hand){
 }
 
 void Opponent::chooseDiscard(Board& board){
-    int max = calculateHand(std::vector<Card> {handCards.at(1), handCards.at(2), handCards.at(3)});
+    float val, max = 0;
+    int index = 0;
+    std::vector<Card> possibleHand (handCards.begin() + 1, handCards.end());
     for(int i = 0; i < (int)handCards.size(); ++i){
-
+        val = calculateHand(possibleHand);
+        if(val > max){
+            index = i;
+            max = val;
+        }
+        possibleHand.erase(possibleHand.begin());
+        possibleHand.push_back(handCards.at(i));
     }
+
+    handCards.erase(handCards.begin() + index);
+
 }
 
 void Opponent::makeMove(int turn, Board& board){

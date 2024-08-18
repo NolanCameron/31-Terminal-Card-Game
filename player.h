@@ -1,4 +1,6 @@
 #pragma once
+#ifndef PLAYER_HH
+#define PLAYER_HH
 #include <vector>
 #include "coord.h"
 #include <ncursesw/curses.h>
@@ -42,3 +44,4 @@ class Opponent:Player{
         void makeMove(int, Board&);
 
 };
+#endif

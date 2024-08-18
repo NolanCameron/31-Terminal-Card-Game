@@ -1,4 +1,6 @@
 #pragma once
+#ifndef BOARD_HH
+#define BOARD_HH
 #include <vector>
 #include "coord.h"
 #include "rectangleArea.h"
@@ -43,3 +45,5 @@ class Board{
     private:
         void initDeck();
 };
+
+#endif

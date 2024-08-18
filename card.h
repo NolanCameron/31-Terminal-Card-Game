@@ -1,6 +1,6 @@
 #pragma once
-#ifndef CARD_HCC
-#define CARD_HCC
+#ifndef CARD_HH
+#define CARD_HH
 
 enum face{A, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, JACK, QUEEN, KING};
 enum suite{DIAMONDS, SPADES, CLUBS, HEARTS};
