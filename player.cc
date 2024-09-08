@@ -1,7 +1,9 @@
-#include "player.h"
+#include "player.hh"
+#include <random>
 
 Player::Player(int y, int x): 
-    score(0)
+    score(0),
+    knock(false)
 {
     for(int i = 0; i < 4; ++i)cardPositions.push_back(Coord(y, x + i*2));
 }
@@ -26,8 +28,8 @@ float Player::getScore(){
 }
 
 float Player::calculateScore(){
-    int suiteScore [4];
-    for(int i = 0; i < 4; ++i) for(int j = 0; j < handCards.size(); ++j){
+    int suiteScore [4] = {1};
+    for(int i = 0; i < 4; ++i) for(int j = 0; j < (int)handCards.size(); ++j){
         if(suite(i) == handCards.at(j).s){
             suiteScore[i] += handCards.at(j).val;
         }
@@ -38,6 +40,18 @@ float Player::calculateScore(){
     }
 
     return 30.5;
+}
+
+int Player::handSize(){
+    return (int)handCards.size();
+}
+
+bool Player::knocked(){
+    return knock;
+}
+
+bool Player::is31(){
+    return calculateScore() > 30.5;
 }
 
 void Opponent::chooseDraw(Board& board){
@@ -90,5 +104,36 @@ void Opponent::chooseDiscard(Board& board){
 }
 
 void Opponent::makeMove(int turn, Board& board){
+    if(chooseKnock(turn)){
+        knock = true;
+        return;
+    }
+    chooseDraw(board);
+    board.drawOpponentHands();
+    getch();
+    chooseDiscard(board);
+    board.drawOpponentHands();
+    getch();
+}
+
+bool Opponent::chooseKnock(int turn){
+
+    std::random_device dev;
+    std::mt19937 rng(dev());
+
+    const float startHandVal = 14;//rough average starting hand val
+    const float tolerance = 2;
+    const float turnIncrement = 0.3;
+    const float maxNonKnockVal = 30;
+    const float randomnessAbsRange = 2;
+    std::uniform_int_distribution<std::mt19937::result_type> random(-randomnessAbsRange,randomnessAbsRange);
+
+    float currentScore = calculateScore();
+
+    if(startHandVal + tolerance + turnIncrement*turn + (float)random(rng) < currentScore || maxNonKnockVal < currentScore){
+        return true;
+    }
+
+    return false;
 
 }

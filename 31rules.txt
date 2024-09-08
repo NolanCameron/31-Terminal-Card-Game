@@ -1,0 +1,10 @@
+The goal of the 31 is to obtain a hand that either has the a value of 31 with one suit
+or has the highest value of one suit after knocking. All face cards have a value of ten
+with the ace having a value of 11 and all other cards having a value corresponding to their face.
+Each round starts with each player having three cards and on card being in the discard. On a
+players turn they have three options, they can either draw from the deck, draw from the top of
+the discard or "knock". If a player would choose to draw a card they woud then choose a card from
+their hand to discard, putting it on top of the discard pile. If a player were to instead choose to
+knock all other players have one more turn after which all players reveal their hands with the
+lowest player losing a point. If the player who knocked was the lowest they instead lose two
+points. The game ends once all but one player has lost all of their points.

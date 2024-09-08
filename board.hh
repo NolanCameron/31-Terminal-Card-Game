@@ -8,9 +8,11 @@
 #include <algorithm>
 #include "card.h"
 #include <ncursesw/curses.h>
-#include "player.h"
+#include "player.hh"
 
 class Player;
+
+class Opponent;
 
 class Board{
 
@@ -18,21 +20,22 @@ class Board{
         int numPlayers;
         std::vector<Card> deck;
         std::vector<Card> discard;
-        std::vector<Player> players;
-        WINDOW *playWindow;
-        WINDOW *handWindow;
+        std::vector<Opponent>& opponents;
+        Player& mainPlayer;
+        WINDOW* playWindow;
+        WINDOW* handWindow;
+        WINDOW* promptWindow;
         Coord playSelectorPosition;
         Coord handSelectorPosition;
         rectangleArea playSpace;
         rectangleArea handSpace;
-        Coord deckPosition;
-        Coord discardPosition;
-
+        const Coord deckPosition;
+        const Coord discardPosition;
         friend class Player;
         friend class Opponent;
 
     public:
-        Board(int, rectangleArea, rectangleArea);
+        Board(int, rectangleArea, rectangleArea, Player&, std::vector<Opponent>&);
         ~Board();
         void movePlaySelector(Coord);
         void moveHandSelector(Coord);
@@ -42,6 +45,16 @@ class Board{
         void shuffle();
         void drawOpponentHands();
         void drawPlayers();
+        void movePlaySelector(int);
+        void moveHandSelector(int);
+        void removePlaySelector();
+        void removeHandSelector();
+        void knockPrompt(int);
+        void roundWinPrompt(int);
+        void continuePrompt();
+        void clearPromptWin();
+        void displayPlayerScore();
+        void playerKnockPrompt(int);
     private:
         void initDeck();
 };

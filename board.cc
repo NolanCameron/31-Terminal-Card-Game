@@ -1,22 +1,24 @@
-#include "board.h"
+#include "board.hh"
+#include <string>
 
 const char* selector = "⮝";
 
-Board::Board(int amountOfPlayers, rectangleArea playSpace, rectangleArea handSpace): 
-    numPlayers(amountOfPlayers),  
+Board::Board(int amountOfPlayers, rectangleArea playSpace, rectangleArea handSpace, Player& player, std::vector<Opponent>& opponentVector): 
+    numPlayers(amountOfPlayers),
+    mainPlayer(player),
+    opponents(opponentVector),
     playWindow(newwin(playSpace.height, playSpace.width, playSpace.y, playSpace.x)),
     handWindow(newwin(handSpace.height, handSpace.width, handSpace.y, handSpace.x)), 
-    playSelectorPosition(Coord()),
-    handSelectorPosition(Coord()),
     playSpace(playSpace),
     handSpace(handSpace),
+    promptWindow(newwin(1, playSpace.width - 2, playSpace.height - 2, playSpace.x + 1)),
     deckPosition(Coord(playSpace.height/2,playSpace.width/2-1)),
-    discardPosition(Coord(playSpace.height/2,playSpace.width/2+1))
+    discardPosition(Coord(playSpace.height/2,playSpace.width/2+1)),
+    handSelectorPosition(Coord())
 {
-        initDeck();
-        players.push_back(Player(handSpace.height/2-1,(handSpace.width-6)/2));
-        for(int i = 1; i < numPlayers; ++i){players.push_back(Player(2,playSpace.width/(numPlayers*2-1)*(2*i-1)));}
+        playSelectorPosition = (Coord(deckPosition.y + 1, deckPosition.x));
 
+        initDeck();
         refresh();
         box(playWindow,0,0);
         box(handWindow,0,0);
@@ -33,9 +35,6 @@ Board::Board(int amountOfPlayers, rectangleArea playSpace, rectangleArea handSpa
         wrefresh(playWindow);
         wrefresh(handWindow);
 
-        wgetch(handWindow);
-        wgetch(playWindow);
-
 }
 
 void Board::initDeck(){
@@ -46,18 +45,23 @@ void Board::initDeck(){
 
 void Board::drawPlayers(){
 
-    for(int i = 1; i < (int)players.size(); ++i){
-        mvwprintw(playWindow,1,playSpace.width/(players.size()*2-1)*(i*2-1),"Player %d",i);
+    for(int i = 0; i < (int)opponents.size(); ++i){
+        mvwprintw(playWindow,1,playSpace.width/(opponents.size()*2-1)*(i*2-1),"Player %d",i);
     } 
 
 }
 
 void Board::drawOpponentHands(){
-    for(int i = 1; i < (int)players.size(); ++i){
-        for(int j = 0; j < (int)players.at(i).handCards.size(); ++j){
-            mvwprintw(playWindow, players.at(i).cardPositions.at(j).y, players.at(i).cardPositions.at(j).x, cardBack);
-        }
-    } 
+
+    for(Opponent opponent : opponents)
+        for(int i = 0; i < (int)opponent.cardPositions.size(); ++i) 
+            if(i < (int)opponent.handCards.size())
+                mvwprintw(playWindow, opponent.cardPositions.at(i).y, opponent.cardPositions.at(i).x, cardBack);
+            else
+                mvwaddch(playWindow, opponent.cardPositions.at(i).y, opponent.cardPositions.at(i).x, ' ');
+
+    wrefresh(playWindow);
+
 }
 
 void Board::shuffle(){
@@ -70,8 +74,10 @@ void Board::shuffle(){
 
 void Board::deal(int amountCards){
 
-    for(int j = 0; j < amountCards; ++j) for(int i = 0; i < (int)players.size(); ++i){
-        players.at(i).drawFromDeck(*this);
+    for(int j = 0; j < amountCards; ++j){
+        mainPlayer.drawFromDeck(*this);
+        for(int i = 0; i < (int)opponents.size(); ++i)
+            opponents.at(i).drawFromDeck(*this);
     }
 
     discard.push_back(deck.back());
@@ -89,7 +95,14 @@ void Board::drawBoard(){
 
 void Board::drawHand(){
 
-    for(int i = 0; i < (int)players.at(0).handCards.size(); ++i) mvwprintw(handWindow, players.at(0).cardPositions.at(i).y, players.at(0).cardPositions.at(i).x, players.at(0).handCards.at(i).sym);
+    for(int i = 0; i < (int)mainPlayer.cardPositions.size(); ++i) 
+        if(i < (int)mainPlayer.handCards.size())
+            mvwprintw(handWindow, mainPlayer.cardPositions.at(i).y, mainPlayer.cardPositions.at(i).x, mainPlayer.handCards.at(i).sym);
+        else
+            mvwaddch(handWindow, mainPlayer.cardPositions.at(i).y, mainPlayer.cardPositions.at(i).x, ' ');
+
+
+    wrefresh(handWindow);
 
 }
 
@@ -97,18 +110,102 @@ Board::~Board(){
 
         delwin(playWindow);
         delwin(handWindow);
+        delwin(promptWindow);
         endwin();
 
 }
 
-void Board::moveHandSelector(Coord Position){
-        mvwdelch(playWindow,handSelectorPosition.y, handSelectorPosition.x);
-        handSelectorPosition = Position;
-        mvwprintw(playWindow, handSelectorPosition.y, handSelectorPosition.x, selector);
+void Board::moveHandSelector(int position){
+
+        if(playSelectorPosition.y != -1)
+            mvwaddch(handWindow, handSelectorPosition.y, handSelectorPosition.x, ' ');
+        handSelectorPosition = Coord(mainPlayer.cardPositions.at(position).y + 1, mainPlayer.cardPositions.at(position).x);
+        mvwprintw(handWindow, handSelectorPosition.y, handSelectorPosition.x, selector);
+        wrefresh(handWindow);
 }
 
-void Board::movePlaySelector(Coord Position){
-        mvwdelch(playWindow,playSelectorPosition.y, playSelectorPosition.x);
-        playSelectorPosition = Position;
+void Board::movePlaySelector(int position){
+
+        mvwaddch(playWindow, playSelectorPosition.y, playSelectorPosition.x, ' ');
+        if(position == 0)
+            playSelectorPosition.x = deckPosition.x;
+        else
+            playSelectorPosition.x = discardPosition.x;
         mvwprintw(playWindow, playSelectorPosition.y, playSelectorPosition.x, selector);
+        wrefresh(playWindow);
+}
+
+
+
+void Board::removePlaySelector(){
+    mvwaddch(playWindow, playSelectorPosition.y, playSelectorPosition.x, ' ');
+    wrefresh(playWindow);
+
+}
+
+void Board::removeHandSelector(){
+    mvwaddch(handWindow, handSelectorPosition.y, handSelectorPosition.x, ' ');
+    wrefresh(handWindow);
+}
+
+void Board::playerKnockPrompt(int index){
+    
+    wclear(promptWindow);
+    const std::string mainPlayerKnocked = "You Knocked!";
+    const std::string opponentKnocked = "Player %d Knocked!";
+
+    if(index == 0)
+        mvwprintw(promptWindow, 0, (playSpace.x - mainPlayerKnocked.length())/2, mainPlayerKnocked.c_str());
+        return;
+
+    mvwprintw(promptWindow, 0, (playSpace.x - opponentKnocked.length())/2, opponentKnocked.c_str(), index + 1);
+    
+    wrefresh(promptWindow);
+
+}
+
+void Board::knockPrompt(int index){
+    
+    wclear(promptWindow);
+    const std::string knockedTxt = "Press k to knock";
+
+    mvwprintw(promptWindow, 0, (playSpace.x - knockedTxt.length())/2, knockedTxt.c_str());
+    
+    wrefresh(promptWindow);
+
+}
+
+void Board::roundWinPrompt(int index){
+
+    wclear(promptWindow);
+    const std::string mainPlayerKnocked = "You Got 31! You Win!";
+    const std::string opponentKnocked = "Player %d Got 31! They Win!";
+
+    if(index == 0)
+        mvwprintw(promptWindow, 0, (playSpace.x - mainPlayerKnocked.length())/2, mainPlayerKnocked.c_str());
+        return;
+
+    mvwprintw(promptWindow, 0, (playSpace.x - opponentKnocked.length())/2, opponentKnocked.c_str(), index + 1);
+    
+    wrefresh(promptWindow);
+}
+
+void Board::continuePrompt(){
+
+    wclear(promptWindow);
+    const std::string continueTxt = "Press any key to Continue";
+
+    mvwprintw(promptWindow, 0, (playSpace.width - continueTxt.length())/2, continueTxt.c_str());
+    wrefresh(promptWindow);
+}
+
+void Board::clearPromptWin(){
+    wclear(promptWindow);
+    wrefresh(promptWindow);
+}
+
+void Board::displayPlayerScore(){
+    const std::string scoreTxt = "Score: %.1f";
+    mvwprintw(handWindow, 1, 1, scoreTxt.c_str(), mainPlayer.calculateScore());
+    wrefresh(handWindow);
 }

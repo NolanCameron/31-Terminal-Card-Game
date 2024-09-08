@@ -7,7 +7,7 @@
 #include "rectangleArea.h"
 #include "card.h"
 #include <algorithm>
-#include "board.h"
+#include "board.hh"
 
 class Board;
 
@@ -18,6 +18,7 @@ class Player{
         std::vector<Card> handCards;
         std::vector<Coord> cardPositions;
         int score;
+        bool knock;
 
         friend class Board;
 
@@ -29,19 +30,27 @@ class Player{
         void discardCard(Board&, int);
         float getScore();
         float calculateScore();
+        int handSize();
+        bool knocked();
+        bool is31();
 };
 
-class Opponent:Player{
+class Opponent: public Player{
 
     private:
 
+        using Player::Player;
         void chooseDraw(Board&);
         void chooseDiscard(Board&);
         float calculateHand(std::vector<Card>);
+        bool chooseKnock(int);
+
+        friend class Board;
 
     public:
 
         void makeMove(int, Board&);
+
 
 };
 #endif
