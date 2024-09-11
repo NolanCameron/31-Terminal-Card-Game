@@ -38,16 +38,14 @@ void Game::start(){
 void Game::startRound(){
 
     int got31OrKnock;
-
     int index;
-
     board = std::make_unique<Board>(numberOfOpponents, playSpace, handSpace, mainPlayer, opponents);
     
     takeTurns(got31OrKnock, index);
 
     board->clearPromptWin();
 
-    board->clearBoard();
+    judgeRound(got31OrKnock, index);
 
     exit(1);
 
@@ -61,8 +59,6 @@ void Game::takeTurns(int& got31OrKnock, int& index){
 
     while(1){
 
-        board->knockPrompt();
-
         if(mainPlayer.knocked()){
             board->playerKnockPrompt(0);
             got31OrKnock = 1;
@@ -70,7 +66,10 @@ void Game::takeTurns(int& got31OrKnock, int& index){
             return;
         }
 
-        if(getch() == 'k' || getch() == 'K'){
+        board->knockPrompt();
+
+        int k = getch();
+        if(k == 'k' || k == 'K'){
             mainPlayer.knock();
         }else{
 
@@ -198,5 +197,26 @@ int Game::playerChooseCard(){
                 break;
             }
         board->moveHandSelector(index);
+    }
+}
+
+void Game::judgeRound(int got31OrKnocked, int index){
+
+    if(got31OrKnocked == 0){
+        for(Opponent& opponent: opponents){
+            if(opponent.knocked() == true)
+                opponent.addPoints(2);
+            else
+                opponent.addPoints(1);
+        }
+        opponents.at(index).addPoints(-1);
+    }else{
+        for(Opponent& opponent: opponents){
+            if(opponent.knocked() == true)
+                opponent.addPoints(2);
+            else
+                opponent.addPoints(1);
+        }
+        opponents.at(index).addPoints(-1);
     }
 }

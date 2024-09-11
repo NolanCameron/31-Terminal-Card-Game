@@ -20,17 +20,17 @@ class Board{
         int numPlayers;
         std::vector<Card> deck;
         std::vector<Card> discard;
-        std::vector<Opponent>& opponents;
         Player& mainPlayer;
+        std::vector<Opponent>& opponents;
         WINDOW* playWindow;
         WINDOW* handWindow;
         WINDOW* promptWindow;
-        Coord playSelectorPosition;
-        Coord handSelectorPosition;
         rectangleArea playSpace;
         rectangleArea handSpace;
         const Coord deckPosition;
         const Coord discardPosition;
+        Coord playSelectorPosition;
+        Coord handSelectorPosition;
         friend class Player;
         friend class Opponent;
 

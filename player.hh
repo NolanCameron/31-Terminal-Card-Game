@@ -34,6 +34,7 @@ class Player{
         bool knocked();
         bool is31();
         void knock();
+        void addPoints(int);
 };
 
 class Opponent: public Player{

@@ -34,6 +34,7 @@ class Game{
         int playerChooseDraw();
         int playerChooseCard();
         void takeTurns(int&, int&);
+        void judgeRound(int, int);
 };
 
 #endif

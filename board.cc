@@ -9,9 +9,9 @@ Board::Board(int amountOfPlayers, rectangleArea playSpace, rectangleArea handSpa
     opponents(opponentVector),
     playWindow(newwin(playSpace.height, playSpace.width, playSpace.y, playSpace.x)),
     handWindow(newwin(handSpace.height, handSpace.width, handSpace.y, handSpace.x)), 
+    promptWindow(newwin(1, playSpace.width - 2, playSpace.height - 2, playSpace.x + 1)),
     playSpace(playSpace),
     handSpace(handSpace),
-    promptWindow(newwin(1, playSpace.width - 2, playSpace.height - 2, playSpace.x + 1)),
     deckPosition(Coord(playSpace.height/2,playSpace.width/2-1)),
     discardPosition(Coord(playSpace.height/2,playSpace.width/2+1)),
     handSelectorPosition(Coord())
@@ -39,7 +39,7 @@ Board::Board(int amountOfPlayers, rectangleArea playSpace, rectangleArea handSpa
 
 void Board::initDeck(){
     for(int i = 0; i < 4; ++i) for(int j = 0; j < 13; ++j){
-            deck.push_back({suite(i),face(j),symbols[i*13+j],j>10 ? 10 : (j == 1 ? 11 : j)});
+            deck.push_back({suite(i), face(j), symbols[i*13+j], j + 1 > 10 ? 10 : (j + 1 == 1 ? 11 : j + 1)});
         }
 }
 

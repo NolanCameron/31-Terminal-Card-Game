@@ -144,3 +144,7 @@ bool Opponent::chooseKnock(int turn){
     return false;
 
 }
+
+void Player::addPoints(int i){
+    points += i;
+}
