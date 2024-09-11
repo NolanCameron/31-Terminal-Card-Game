@@ -1,6 +1,6 @@
 CXX = g++
 
-CXXFLAGS = -std=c++20 -g -Wall -Wvla -lncursesw
+CXXFLAGS = -std=c++20 -g -Wall -Wvla -Werror -lncursesw
 
 objects = board.o player.o 31Menu.o game.o 31.o 
 

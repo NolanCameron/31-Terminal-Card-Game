@@ -27,7 +27,7 @@ void Game::start(){
     round = menu.getRounds();
 
     for(int i = 0; i < numberOfOpponents; ++i)
-        opponents.push_back(Opponent(2,playSpace.width/(numberOfOpponents*2+1)*(2*i-1)));
+        opponents.push_back(Opponent(2,playSpace.width/(numberOfOpponents*2+1)*(2*i + 1)));
 
     while(round != 0){
         startRound();

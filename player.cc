@@ -20,10 +20,10 @@ void Player::drawFromDiscard(Board& board){
 
 void Player::discardCard(Board& board, int cardIndex){
     board.discard.push_back(handCards.at(cardIndex));
-    handCards.erase(handCards.begin()+cardIndex);
+    handCards.erase(handCards.begin() + cardIndex);
 }
 
-float Player::getPoints(){
+int Player::getPoints(){
     return points;
 }
 
@@ -133,7 +133,7 @@ bool Opponent::chooseKnock(int turn){
     const float turnIncrement = 0.4;
     const float maxNonKnockVal = 30;
     const float randomnessAbsRange = 2;
-    std::uniform_int_distribution<std::mt19937::result_type> random(-randomnessAbsRange,randomnessAbsRange);
+    std::uniform_real_distribution<float> random(-randomnessAbsRange,randomnessAbsRange);
 
     float currentScore = calculateScore();
 

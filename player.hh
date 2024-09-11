@@ -28,7 +28,7 @@ class Player{
         void drawFromDeck(Board&);
         void drawFromDiscard(Board&);
         void discardCard(Board&, int);
-        float getPoints();
+        int getPoints();
         float calculateScore();
         int handSize();
         bool knocked();
