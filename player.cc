@@ -2,8 +2,8 @@
 #include <random>
 
 Player::Player(int y, int x): 
-    score(0),
-    knock(false)
+    points(0),
+    knockVal(false)
 {
     for(int i = 0; i < 4; ++i)cardPositions.push_back(Coord(y, x + i*2));
 }
@@ -23,8 +23,8 @@ void Player::discardCard(Board& board, int cardIndex){
     handCards.erase(handCards.begin()+cardIndex);
 }
 
-float Player::getScore(){
-    return score;
+float Player::getPoints(){
+    return points;
 }
 
 float Player::calculateScore(){
@@ -47,7 +47,11 @@ int Player::handSize(){
 }
 
 bool Player::knocked(){
-    return knock;
+    return knockVal;
+}
+
+void Player::knock(){
+    knockVal = true;
 }
 
 bool Player::is31(){
@@ -99,20 +103,23 @@ void Opponent::chooseDiscard(Board& board){
         possibleHand.push_back(handCards.at(i));
     }
 
+    board.discard.push_back(handCards.at(index));
     handCards.erase(handCards.begin() + index);
 
 }
 
 void Opponent::makeMove(int turn, Board& board){
     if(chooseKnock(turn)){
-        knock = true;
+        knockVal = true;
         return;
     }
     chooseDraw(board);
     board.drawOpponentHands();
+    board.drawBoard();
     getch();
     chooseDiscard(board);
     board.drawOpponentHands();
+    board.drawBoard();
     getch();
 }
 
@@ -122,8 +129,8 @@ bool Opponent::chooseKnock(int turn){
     std::mt19937 rng(dev());
 
     const float startHandVal = 14;//rough average starting hand val
-    const float tolerance = 2;
-    const float turnIncrement = 0.3;
+    const float tolerance = 4;
+    const float turnIncrement = 0.4;
     const float maxNonKnockVal = 30;
     const float randomnessAbsRange = 2;
     std::uniform_int_distribution<std::mt19937::result_type> random(-randomnessAbsRange,randomnessAbsRange);

@@ -10,7 +10,7 @@ class Menu{
     private:
         int y, x;
         int numberOfRounds;
-        int numberOfPlayers;
+        int numberOfOpponents;
         std::ifstream rulesFile;
         const int maxOpponents = 6;
         const int maxRounds = 9;
@@ -19,7 +19,7 @@ class Menu{
         Menu(int,int);
         ~Menu();
         void start();
-        int getNumOfPlayers();
+        int getNumberOfOpponents();
         int getYSize();
         int getXSize();
         int getRounds();

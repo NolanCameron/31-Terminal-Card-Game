@@ -46,7 +46,7 @@ void Board::initDeck(){
 void Board::drawPlayers(){
 
     for(int i = 0; i < (int)opponents.size(); ++i){
-        mvwprintw(playWindow,1,playSpace.width/(opponents.size()*2-1)*(i*2-1),"Player %d",i);
+        mvwprintw(playWindow, 1, opponents.at(i).cardPositions.at(0).x - 2,"Player %d: %d", i + 1, opponents.at(i).getPoints());
     } 
 
 }
@@ -89,8 +89,9 @@ void Board::drawBoard(){
 
     if(deck.size() > 0) mvwprintw(playWindow, deckPosition.y, deckPosition.x, cardBack);
     if(discard.size() != 0) {mvwprintw(playWindow, discardPosition.y, discardPosition.x, discard.back().sym);}
-    else{mvwdelch(playWindow, discardPosition.y, discardPosition.x);}
+    else{mvwaddch(playWindow, discardPosition.y, discardPosition.x, ' ');}
 
+    wrefresh(playWindow);
 }
 
 void Board::drawHand(){
@@ -154,9 +155,10 @@ void Board::playerKnockPrompt(int index){
     const std::string mainPlayerKnocked = "You Knocked!";
     const std::string opponentKnocked = "Player %d Knocked!";
 
-    if(index == 0)
+    if(index == 0){
         mvwprintw(promptWindow, 0, (playSpace.x - mainPlayerKnocked.length())/2, mainPlayerKnocked.c_str());
         return;
+    }
 
     mvwprintw(promptWindow, 0, (playSpace.x - opponentKnocked.length())/2, opponentKnocked.c_str(), index + 1);
     
@@ -164,12 +166,12 @@ void Board::playerKnockPrompt(int index){
 
 }
 
-void Board::knockPrompt(int index){
+void Board::knockPrompt(){
     
     wclear(promptWindow);
-    const std::string knockedTxt = "Press k to knock";
+    const std::string knockedTxt = "Press k to Knock Else, Hit Any Key";
 
-    mvwprintw(promptWindow, 0, (playSpace.x - knockedTxt.length())/2, knockedTxt.c_str());
+    mvwprintw(promptWindow, 0, (playSpace.width - knockedTxt.length())/2, knockedTxt.c_str());
     
     wrefresh(promptWindow);
 
@@ -181,9 +183,10 @@ void Board::roundWinPrompt(int index){
     const std::string mainPlayerKnocked = "You Got 31! You Win!";
     const std::string opponentKnocked = "Player %d Got 31! They Win!";
 
-    if(index == 0)
+    if(index == 0){
         mvwprintw(promptWindow, 0, (playSpace.x - mainPlayerKnocked.length())/2, mainPlayerKnocked.c_str());
         return;
+    }
 
     mvwprintw(promptWindow, 0, (playSpace.x - opponentKnocked.length())/2, opponentKnocked.c_str(), index + 1);
     
@@ -208,4 +211,9 @@ void Board::displayPlayerScore(){
     const std::string scoreTxt = "Score: %.1f";
     mvwprintw(handWindow, 1, 1, scoreTxt.c_str(), mainPlayer.calculateScore());
     wrefresh(handWindow);
+}
+
+void Board::clearBoard(){
+    wclear(playWindow);
+    wclear(handWindow);
 }

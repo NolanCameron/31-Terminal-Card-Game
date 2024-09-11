@@ -3,7 +3,7 @@
 #include <vector>
 #include <string>
 
-Menu::Menu(int rows, int cols) : y(rows), x(cols), numberOfRounds(0), numberOfPlayers(0){
+Menu::Menu(int rows, int cols) : y(rows), x(cols), numberOfRounds(0), numberOfOpponents(0){
     rulesFile.open("31rules.txt");
 }
 
@@ -49,7 +49,7 @@ void Menu::setSettings(){
         k = getch();    
     }
 
-    numberOfPlayers = k - '0';
+    numberOfOpponents = k - '0';
 
     clear();
 
@@ -91,8 +91,8 @@ int Menu::getYSize(){
     return y;
 }
 
-int Menu::getNumOfPlayers(){
-    return numberOfPlayers;
+int Menu::getNumberOfOpponents(){
+    return numberOfOpponents;
 }
 
 int Menu::getRounds(){

@@ -55,6 +55,8 @@ class Board{
         void clearPromptWin();
         void displayPlayerScore();
         void playerKnockPrompt(int);
+        void knockPrompt();
+        void clearBoard();
     private:
         void initDeck();
 };

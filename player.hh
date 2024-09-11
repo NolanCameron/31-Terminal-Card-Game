@@ -17,8 +17,8 @@ class Player{
 
         std::vector<Card> handCards;
         std::vector<Coord> cardPositions;
-        int score;
-        bool knock;
+        int points;
+        bool knockVal;
 
         friend class Board;
 
@@ -28,11 +28,12 @@ class Player{
         void drawFromDeck(Board&);
         void drawFromDiscard(Board&);
         void discardCard(Board&, int);
-        float getScore();
+        float getPoints();
         float calculateScore();
         int handSize();
         bool knocked();
         bool is31();
+        void knock();
 };
 
 class Opponent: public Player{

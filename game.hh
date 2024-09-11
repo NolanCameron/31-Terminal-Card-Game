@@ -33,6 +33,7 @@ class Game{
     private:
         int playerChooseDraw();
         int playerChooseCard();
+        void takeTurns(int&, int&);
 };
 
 #endif

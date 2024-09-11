@@ -22,13 +22,12 @@ void Game::start(){
 
     menu.start();
 
-    numberOfOpponents = menu.getNumOfPlayers();
+    numberOfOpponents = menu.getNumberOfOpponents();
 
     round = menu.getRounds();
 
-    for(int i = 0; i < numberOfOpponents + 1; ++i){opponents.push_back(Opponent(2,playSpace.width/(numberOfOpponents*2+1)*(2*i-1)));}
-
-
+    for(int i = 0; i < numberOfOpponents; ++i)
+        opponents.push_back(Opponent(2,playSpace.width/(numberOfOpponents*2+1)*(2*i-1)));
 
     while(round != 0){
         startRound();
@@ -38,35 +37,69 @@ void Game::start(){
 
 void Game::startRound(){
 
+    int got31OrKnock;
+
+    int index;
+
+    board = std::make_unique<Board>(numberOfOpponents, playSpace, handSpace, mainPlayer, opponents);
+    
+    takeTurns(got31OrKnock, index);
+
+    board->clearPromptWin();
+
+    board->clearBoard();
+
+    exit(1);
+
+}
+
+void Game::takeTurns(int& got31OrKnock, int& index){
 
     int turn = 0;
-    board = std::make_unique<Board>(numberOfOpponents, playSpace, handSpace, mainPlayer, opponents);
 
     board->displayPlayerScore();
 
     while(1){
 
+        board->knockPrompt();
+
         if(mainPlayer.knocked()){
-            board->knockPrompt(0);
-            break;
+            board->playerKnockPrompt(0);
+            got31OrKnock = 1;
+            index = 0;
+            return;
         }
 
-        if(playerChooseDraw() == 1)
-            mainPlayer.drawFromDiscard(*board);
-        else
-            mainPlayer.drawFromDeck(*board);
+        if(getch() == 'k' || getch() == 'K'){
+            mainPlayer.knock();
+        }else{
 
-        board->drawHand();
+            board->clearPromptWin();
 
-        mainPlayer.discardCard(*board, playerChooseCard());
+            if(playerChooseDraw() == 1)
+                mainPlayer.drawFromDiscard(*board);
+            else
+                mainPlayer.drawFromDeck(*board);
 
-        board->displayPlayerScore();
+            board->drawHand();
 
-        board->drawHand();
+            board->drawBoard();
 
-        if(mainPlayer.is31()){
-            board->roundWinPrompt(0);
-            break;
+            mainPlayer.discardCard(*board, playerChooseCard());
+
+            board->drawBoard();
+
+            board->displayPlayerScore();
+
+            board->drawHand();
+
+            if(mainPlayer.is31()){
+                board->roundWinPrompt(0);
+                got31OrKnock = 0;
+                index = 0;
+                return;
+            }
+
         }
 
         ++turn;
@@ -75,15 +108,19 @@ void Game::startRound(){
         for(Opponent& opponent: opponents){
 
             if(opponent.knocked()){
-                board->knockPrompt(turn % (numberOfOpponents + 1));
-                break;
+                board->playerKnockPrompt(turn % (numberOfOpponents + 1));
+                got31OrKnock = 1;
+                index = turn % (numberOfOpponents + 1);
+                return;
             }
 
             opponent.makeMove(turn, *board);
 
             if(opponent.is31()){
                 board->roundWinPrompt(turn % (numberOfOpponents + 1));
-                break;
+                got31OrKnock = 0;
+                index = turn % (numberOfOpponents + 1);
+                return;
             }
 
             ++turn;
@@ -92,14 +129,7 @@ void Game::startRound(){
         board->clearPromptWin();
 
     }
-
-    board->clearPromptWin();
-
-
-
 }
-
-
 
 int Game::playerChooseDraw(){
 
