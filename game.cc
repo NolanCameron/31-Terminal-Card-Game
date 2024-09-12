@@ -47,7 +47,7 @@ void Game::startRound(){
 
     judgeRound(got31OrKnock, index);
 
-    exit(1);
+    clearPlayerHands();
 
 }
 
@@ -203,20 +203,37 @@ int Game::playerChooseCard(){
 void Game::judgeRound(int got31OrKnocked, int index){
 
     if(got31OrKnocked == 0){
-        for(Opponent& opponent: opponents){
-            if(opponent.knocked() == true)
-                opponent.addPoints(2);
-            else
-                opponent.addPoints(1);
+
+        for(Opponent& opponent: opponents)
+            opponent.addPoints(1 + opponent.knocked());
+
+        if(index != 0){
+            mainPlayer.addPoints(1 + mainPlayer.knocked());
+            opponents.at(index - 1).addPoints(-2);
         }
-        opponents.at(index).addPoints(-1);
+
     }else{
+
+        int lowestScore = mainPlayer.calculateScore();
         for(Opponent& opponent: opponents){
-            if(opponent.knocked() == true)
-                opponent.addPoints(2);
-            else
-                opponent.addPoints(1);
+            int k = opponent.calculateScore();
+            if(k < lowestScore)
+                lowestScore = k;
         }
-        opponents.at(index).addPoints(-1);
+
+        if(mainPlayer.calculateScore() == lowestScore)
+            mainPlayer.addPoints(1 + mainPlayer.knocked());
+
+        for(Opponent& opponent: opponents){
+            if(opponent.calculateScore() == lowestScore)
+                opponent.addPoints(1 + opponent.knocked());
+
+        }
+
     }
 }
+
+void Game::clearPlayerHands(){
+    
+}
+
