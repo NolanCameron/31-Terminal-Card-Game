@@ -58,6 +58,14 @@ bool Player::is31(){
     return calculateScore() > 30.5;
 }
 
+void Player::addPoints(int i){
+    points += i;
+}
+
+void Player::clearHand(){
+    handCards.clear();
+}
+
 void Opponent::chooseDraw(Board& board){
 
     int score = calculateScore();
@@ -145,6 +153,3 @@ bool Opponent::chooseKnock(int turn){
 
 }
 
-void Player::addPoints(int i){
-    points += i;
-}

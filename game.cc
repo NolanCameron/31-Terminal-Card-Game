@@ -234,6 +234,8 @@ void Game::judgeRound(int got31OrKnocked, int index){
 }
 
 void Game::clearPlayerHands(){
-    
+    mainPlayer.clearHand();
+    for(Opponent opponent : opponents)
+        opponent.clearHand();
 }
 
