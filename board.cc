@@ -207,6 +207,14 @@ void Board::clearPromptWin(){
     wrefresh(promptWindow);
 }
 
+void Board::roundOverPrompt(){
+    wclear(promptWindow);
+    const std::string roundOverTxt = "Round Over!";
+
+    mvwprintw(promptWindow, 0, (playSpace.width - roundOverTxt.length())/2, roundOverTxt.c_str());
+    wrefresh(promptWindow);
+}
+
 void Board::displayPlayerScore(){
     const std::string scoreTxt = "Score: %.1f";
     mvwprintw(handWindow, 1, 1, scoreTxt.c_str(), mainPlayer.calculateScore());
@@ -216,4 +224,27 @@ void Board::displayPlayerScore(){
 void Board::clearBoard(){
     wclear(playWindow);
     wclear(handWindow);
+    wclear(promptWindow);
+}
+
+void Board::resetBoard(){
+
+    wclear(promptWindow);
+    resetDeckAndDiscard();
+    deal(3);
+    drawPlayers();
+    drawBoard();
+    drawHand();
+    drawOpponentHands();
+
+    wrefresh(playWindow);
+    wrefresh(handWindow);
+    wrefresh(promptWindow);
+}
+
+void Board::resetDeckAndDiscard(){
+    discard.clear();
+    deck.clear();
+    initDeck();
+    shuffle();
 }

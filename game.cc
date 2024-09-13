@@ -29,8 +29,11 @@ void Game::start(){
     for(int i = 0; i < numberOfOpponents; ++i)
         opponents.push_back(Opponent(2,playSpace.width/(numberOfOpponents*2+1)*(2*i + 1)));
 
+    board = std::make_unique<Board>(numberOfOpponents, playSpace, handSpace, mainPlayer, opponents);
+
     while(round != 0){
         startRound();
+        --round;
     }
 
 }
@@ -39,15 +42,19 @@ void Game::startRound(){
 
     int got31OrKnock;
     int index;
-    board = std::make_unique<Board>(numberOfOpponents, playSpace, handSpace, mainPlayer, opponents);
     
     takeTurns(got31OrKnock, index);
 
     board->clearPromptWin();
+    board->roundOverPrompt();
 
     judgeRound(got31OrKnock, index);
 
+    getch();
+
     clearPlayerHands();
+
+    board->resetBoard();
 
 }
 

@@ -56,9 +56,13 @@ class Board{
         void displayPlayerScore();
         void playerKnockPrompt(int);
         void knockPrompt();
+        void roundOverPrompt();
         void clearBoard();
+        void resetBoard();
     private:
         void initDeck();
+        void resetDeckAndDiscard();
+
 };
 
 #endif
