@@ -57,6 +57,7 @@ class Board{
         void playerKnockPrompt(int);
         void knockPrompt();
         void roundOverPrompt();
+        void revealOpponentsHands();
         void clearBoard();
         void resetBoard();
     private:

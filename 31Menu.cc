@@ -13,26 +13,23 @@ Menu::~Menu(){
 
 void Menu::printRules(){
 
-    int lineLength = 0;
-    int maxLineLength = x - 2;
+    int maxLineLength = x - 5;
     std::string str;
-    std::vector<std::string> line;
+    std::string line;
     int rowPosition = 1;
     
     move(rowPosition,2);
     while(std::getline(rulesFile,str)){
-        if(lineLength + (int)str.length() + 1 > maxLineLength){
-            for(auto i: line){
-                printw("%s ",i.c_str());
-            }
+        if((int)line.length() + (int)str.length() + 1 > maxLineLength){
+            printw("%s ",line.c_str());
             move(++rowPosition,2);
-            lineLength = 0;
             line.clear();
         }
-            line.push_back(str);
-            lineLength += str.length() + 1;
+            line += " " + str;
         
     }
+    printw("%s ", line.c_str());
+
 }
 
 void Menu::setSettings(){

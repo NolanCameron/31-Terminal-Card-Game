@@ -216,9 +216,20 @@ void Board::roundOverPrompt(){
 }
 
 void Board::displayPlayerScore(){
-    const std::string scoreTxt = "Score: %.1f";
-    mvwprintw(handWindow, 1, 1, scoreTxt.c_str(), mainPlayer.calculateScore());
+    const std::string scoreTxt = "Points: %d";
+    mvwprintw(handWindow, 1, 1, scoreTxt.c_str(), mainPlayer.getPoints());
     wrefresh(handWindow);
+}
+
+void Board::revealOpponentsHands(){
+        for(Opponent opponent : opponents)
+        for(int i = 0; i < (int)opponent.cardPositions.size(); ++i) 
+            if(i < (int)opponent.handCards.size())
+                mvwprintw(playWindow, opponent.cardPositions.at(i).y, opponent.cardPositions.at(i).x, opponent.handCards.at(i).sym);
+            else
+                mvwaddch(playWindow, opponent.cardPositions.at(i).y, opponent.cardPositions.at(i).x, ' ');
+
+    wrefresh(playWindow);
 }
 
 void Board::clearBoard(){

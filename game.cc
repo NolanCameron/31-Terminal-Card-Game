@@ -50,6 +50,8 @@ void Game::startRound(){
 
     judgeRound(got31OrKnock, index);
 
+    board->revealOpponentsHands();
+
     getch();
 
     clearPlayerHands();
@@ -78,6 +80,7 @@ void Game::takeTurns(int& got31OrKnock, int& index){
         int k = getch();
         if(k == 'k' || k == 'K'){
             mainPlayer.knock();
+            board->playerKnockPrompt(0);
         }else{
 
             board->clearPromptWin();
@@ -114,13 +117,15 @@ void Game::takeTurns(int& got31OrKnock, int& index){
         for(Opponent& opponent: opponents){
 
             if(opponent.knocked()){
-                board->playerKnockPrompt(turn % (numberOfOpponents + 1));
                 got31OrKnock = 1;
                 index = turn % (numberOfOpponents + 1);
                 return;
             }
 
             opponent.makeMove(turn, *board);
+
+            if(opponent.knocked())
+                board->playerKnockPrompt(turn % (numberOfOpponents + 1));
 
             if(opponent.is31()){
                 board->roundWinPrompt(turn % (numberOfOpponents + 1));
