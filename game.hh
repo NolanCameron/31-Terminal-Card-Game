@@ -4,7 +4,7 @@
 #include "31Menu.hh"
 #include "board.hh"
 #include "player.hh"
-#include "rectangleArea.h"
+#include "rectangleArea.hh"
 #include <vector>
 #include <ncursesw/curses.h>
 #include <memory>

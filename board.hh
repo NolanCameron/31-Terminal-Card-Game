@@ -2,8 +2,8 @@
 #ifndef BOARD_HH
 #define BOARD_HH
 #include <vector>
-#include "coord.h"
-#include "rectangleArea.h"
+#include "coord.hh"
+#include "rectangleArea.hh"
 #include <random>
 #include <algorithm>
 #include "card.h"

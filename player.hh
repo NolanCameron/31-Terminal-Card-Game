@@ -2,9 +2,9 @@
 #ifndef PLAYER_HH
 #define PLAYER_HH
 #include <vector>
-#include "coord.h"
+#include "coord.hh"
 #include <ncursesw/curses.h>
-#include "rectangleArea.h"
+#include "rectangleArea.hh"
 #include "card.h"
 #include <algorithm>
 #include "board.hh"

@@ -1,8 +1,7 @@
 #include <locale.h>
 #include <iostream>
 #include <ncursesw/ncurses.h>
-#include "31.h"
-#include "rectangleArea.h"
+#include "rectangleArea.hh"
 #include "game.hh"
 
 #include "board.hh"
