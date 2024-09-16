@@ -66,12 +66,12 @@ void Menu::setSettings(){
 
 void Menu::start(){
 
-    printRules();
+    /*printRules();
 
     printw("\n\n\tHit any key to contiune");
 
     getch();
-
+    */
     clear();
 
     setSettings();
