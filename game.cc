@@ -28,7 +28,7 @@ void Game::start(){
     round = menu.getRounds();
 
     for(int i = 0; i < numberOfOpponents; ++i)
-        opponents.push_back(Opponent(2,playSpace.width/(numberOfOpponents*2+1)*(2*i + 1)));
+        opponents.push_back(Opponent(2, (playSpace.width - 11*numberOfOpponents)/(numberOfOpponents + 1)*(i+1) + 11*(i) + 2));
 
     board = std::make_unique<Board>(numberOfOpponents, playSpace, handSpace, mainPlayer, opponents);
 
@@ -36,6 +36,10 @@ void Game::start(){
         startRound();
         --round;
     }
+
+    endGame();
+
+    getch();
 
     running = false;
 
@@ -235,9 +239,9 @@ void Game::judgeRound(int got31OrKnocked, int index){
 
     }else{
 
-        int lowestScore = mainPlayer.calculateScore();
+        float lowestScore = mainPlayer.calculateScore();
         for(Opponent& opponent: opponents){
-            int k = opponent.calculateScore();
+            float k = opponent.calculateScore();
             if(k < lowestScore)
                 lowestScore = k;
         }
@@ -262,4 +266,10 @@ void Game::resetPlayers(){
         opponent.clearHand();
     }
 
+}
+
+void Game::endGame(){
+    board->clearBoard();
+    board->printResults();
+    board->endPrompt();
 }

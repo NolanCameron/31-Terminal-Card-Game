@@ -27,7 +27,6 @@ class Game{
         Game();
         void start();
         bool isRunning();
-        void endGame();
         void startRound();
 
     private:
@@ -36,6 +35,7 @@ class Game{
         void takeTurns(int&, int&);
         void judgeRound(int, int);
         void resetPlayers();
+        void endGame();
 };
 
 #endif

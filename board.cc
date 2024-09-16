@@ -152,8 +152,8 @@ void Board::removeHandSelector(){
 void Board::playerKnockPrompt(int index){
     
     wclear(promptWindow);
-    const std::string mainPlayerKnocked = "You Knocked!";
-    const std::string opponentKnocked = "Player %d Knocked!";
+    const std::string mainPlayerKnocked = "You Knocked! Press any key to Continue";
+    const std::string opponentKnocked = "Player %d Knocked! Press any key to Continu";
 
     if(index == 0)
         mvwprintw(promptWindow, 0, (playSpace.width - mainPlayerKnocked.length())/2, mainPlayerKnocked.c_str());
@@ -232,6 +232,9 @@ void Board::clearBoard(){
     wclear(playWindow);
     wclear(handWindow);
     wclear(promptWindow);
+    wrefresh(playWindow);
+    wrefresh(handWindow);
+    wrefresh(promptWindow);
 }
 
 void Board::resetBoard(){
@@ -254,4 +257,52 @@ void Board::resetDeckAndDiscard(){
     deck.clear();
     initDeck();
     shuffle();
+}
+
+void Board::printResults(){
+
+    std::string results;
+
+    int lowestPoints = mainPlayer.getPoints();
+    int highestPoints = mainPlayer.getPoints();
+    for(Opponent& opponent: opponents){
+        int k = opponent.getPoints();
+        if(k < lowestPoints)
+            lowestPoints = k;
+        if(k > highestPoints)
+            highestPoints = k;
+    }
+
+
+    bool mainPlayerWon = false;
+    if(mainPlayer.calculateScore() == lowestPoints){
+        results += "You ";
+        mainPlayerWon = true;
+    }
+
+    bool opponentWon = false;
+    int i = 0;
+
+    for(Opponent& opponent: opponents){
+        ++i;
+        if(opponent.calculateScore() == lowestPoints){
+            if(opponentWon == false){
+                opponentWon = true;
+                if(mainPlayerWon == true)
+                    results += "and ";
+                results += "Player ";
+            }
+            results += + i + ", " ;
+        }
+    }
+
+    results += "Won! ";
+
+    mvwprintw(playWindow, playSpace.height/2, (playSpace.width - results.length())/2, results.c_str());
+    wrefresh(playWindow);
+
+}
+
+void Board::endPrompt(){
+    return;
 }
