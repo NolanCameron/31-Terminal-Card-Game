@@ -261,48 +261,18 @@ void Board::resetDeckAndDiscard(){
 
 void Board::printResults(){
 
-    std::string results;
+    box(playWindow,0,0);
 
-    int lowestPoints = mainPlayer.getPoints();
-    int highestPoints = mainPlayer.getPoints();
-    for(Opponent& opponent: opponents){
-        int k = opponent.getPoints();
-        if(k < lowestPoints)
-            lowestPoints = k;
-        if(k > highestPoints)
-            highestPoints = k;
-    }
+    mvwprintw(playWindow, (playSpace.height-opponents.size()-2)/2, playSpace.width/3, "Scores:");
+    mvwprintw(playWindow, (playSpace.height-opponents.size()-2)/2 + 2, playSpace.width/3, "You Got: %d Points!", mainPlayer.getPoints());
 
-
-    bool mainPlayerWon = false;
-    if(mainPlayer.calculateScore() == lowestPoints){
-        results += "You ";
-        mainPlayerWon = true;
-    }
-
-    bool opponentWon = false;
     int i = 0;
-
-    for(Opponent& opponent: opponents){
+    for(Opponent opponent : opponents){
         ++i;
-        if(opponent.calculateScore() == lowestPoints){
-            if(opponentWon == false){
-                opponentWon = true;
-                if(mainPlayerWon == true)
-                    results += "and ";
-                results += "Player ";
-            }
-            results += + i + ", " ;
-        }
+        mvwprintw(playWindow, (playSpace.height-opponents.size()-2)/2 + 2 + i, playSpace.width/3, "Player %d Got: %d Points!", i, opponent.getPoints());
     }
 
-    results += "Won! ";
-
-    mvwprintw(playWindow, playSpace.height/2, (playSpace.width - results.length())/2, results.c_str());
+    mvwprintw(playWindow, playSpace.height - 3, (playSpace.width - 10)/2, "Game Over!");
     wrefresh(playWindow);
 
-}
-
-void Board::endPrompt(){
-    return;
 }

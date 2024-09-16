@@ -61,7 +61,6 @@ class Board{
         void clearBoard();
         void resetBoard();
         void printResults();
-        void endPrompt();
     private:
         void initDeck();
         void resetDeckAndDiscard();

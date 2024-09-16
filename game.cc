@@ -271,5 +271,4 @@ void Game::resetPlayers(){
 void Game::endGame(){
     board->clearBoard();
     board->printResults();
-    board->endPrompt();
 }
