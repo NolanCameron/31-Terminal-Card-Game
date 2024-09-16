@@ -116,9 +116,10 @@ void Opponent::chooseDiscard(Board& board){
 
 }
 
-void Opponent::makeMove(int turn, Board& board){
-    if(chooseKnock(turn)){
+void Opponent::makeMove(int turn, bool& knock, Board& board){
+    if(chooseKnock(turn, knock)){
         knockVal = true;
+        knock = true;
         return;
     }
     chooseDraw(board);
@@ -131,23 +132,23 @@ void Opponent::makeMove(int turn, Board& board){
     getch();
 }
 
-bool Opponent::chooseKnock(int turn){
+bool Opponent::chooseKnock(int turn, bool knock){
 
     std::random_device dev;
     std::mt19937 rng(dev());
 
     const float startHandVal = 14;//rough average starting hand val
     const float tolerance = 4;
-    const float turnIncrement = 0.4;
+    const float turnIncrement = 0.3;
     const float maxNonKnockVal = 30;
     const float randomnessAbsRange = 2;
     std::uniform_real_distribution<float> random(-randomnessAbsRange,randomnessAbsRange);
 
     float currentScore = calculateScore();
 
-    if(startHandVal + tolerance + turnIncrement*turn + (float)random(rng) < currentScore || maxNonKnockVal < currentScore){
+    if((startHandVal + tolerance + turnIncrement*turn + (float)random(rng) < currentScore || maxNonKnockVal < currentScore) && knock == false)
         return true;
-    }
+    
 
     return false;
 

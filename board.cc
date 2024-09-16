@@ -155,12 +155,10 @@ void Board::playerKnockPrompt(int index){
     const std::string mainPlayerKnocked = "You Knocked!";
     const std::string opponentKnocked = "Player %d Knocked!";
 
-    if(index == 0){
-        mvwprintw(promptWindow, 0, (playSpace.x - mainPlayerKnocked.length())/2, mainPlayerKnocked.c_str());
-        return;
-    }
-
-    mvwprintw(promptWindow, 0, (playSpace.x - opponentKnocked.length())/2, opponentKnocked.c_str(), index + 1);
+    if(index == 0)
+        mvwprintw(promptWindow, 0, (playSpace.width - mainPlayerKnocked.length())/2, mainPlayerKnocked.c_str());
+    else
+        mvwprintw(promptWindow, 0, (playSpace.width - opponentKnocked.length())/2, opponentKnocked.c_str(), index);
     
     wrefresh(promptWindow);
 
@@ -183,12 +181,10 @@ void Board::roundWinPrompt(int index){
     const std::string mainPlayerKnocked = "You Got 31! You Win!";
     const std::string opponentKnocked = "Player %d Got 31! They Win!";
 
-    if(index == 0){
+    if(index == 0)
         mvwprintw(promptWindow, 0, (playSpace.x - mainPlayerKnocked.length())/2, mainPlayerKnocked.c_str());
-        return;
-    }
-
-    mvwprintw(promptWindow, 0, (playSpace.x - opponentKnocked.length())/2, opponentKnocked.c_str(), index + 1);
+    else
+        mvwprintw(promptWindow, 0, (playSpace.x - opponentKnocked.length())/2, opponentKnocked.c_str(), index + 1);
     
     wrefresh(promptWindow);
 }

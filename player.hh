@@ -46,13 +46,13 @@ class Opponent: public Player{
         void chooseDraw(Board&);
         void chooseDiscard(Board&);
         float calculateHand(std::vector<Card>);
-        bool chooseKnock(int);
+        bool chooseKnock(int, bool);
 
         friend class Board;
 
     public:
 
-        void makeMove(int, Board&);
+        void makeMove(int, bool&, Board&);
 
 
 };

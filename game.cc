@@ -14,9 +14,10 @@ mainPlayer(Player(handSpace.height/2,(handSpace.width-6)/2))
 
 void Game::start(){
 
-    keypad(stdscr, true);
+    if(running == true)
+        return;
 
-    if(running == true){return;}
+    keypad(stdscr, true);
 
     running = true;
 
@@ -35,6 +36,8 @@ void Game::start(){
         startRound();
         --round;
     }
+
+    running = false;
 
 }
 
@@ -63,6 +66,7 @@ void Game::startRound(){
 void Game::takeTurns(int& got31OrKnock, int& index){
 
     int turn = 0;
+    bool playerHasKnocked = false;
 
     board->displayPlayerScore();
 
@@ -81,6 +85,7 @@ void Game::takeTurns(int& got31OrKnock, int& index){
         if(k == 'k' || k == 'K'){
             mainPlayer.knock();
             board->playerKnockPrompt(0);
+            playerHasKnocked = true;
         }else{
 
             board->clearPromptWin();
@@ -109,10 +114,14 @@ void Game::takeTurns(int& got31OrKnock, int& index){
                 return;
             }
 
+            board->continuePrompt();
+
+
         }
 
         ++turn;
-        board->continuePrompt();
+
+        getch();
 
         for(Opponent& opponent: opponents){
 
@@ -122,7 +131,7 @@ void Game::takeTurns(int& got31OrKnock, int& index){
                 return;
             }
 
-            opponent.makeMove(turn, *board);
+            opponent.makeMove(turn, playerHasKnocked, *board);
 
             if(opponent.knocked())
                 board->playerKnockPrompt(turn % (numberOfOpponents + 1));
