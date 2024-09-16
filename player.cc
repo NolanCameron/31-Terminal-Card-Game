@@ -66,6 +66,10 @@ void Player::clearHand(){
     handCards.clear();
 }
 
+void Player::resetKnock(){
+    knockVal = false;
+}
+
 void Opponent::chooseDraw(Board& board){
 
     int score = calculateScore();

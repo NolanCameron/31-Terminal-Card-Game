@@ -220,7 +220,7 @@ void Board::displayPlayerScore(){
 void Board::revealOpponentsHands(){
         for(Opponent opponent : opponents)
         for(int i = 0; i < (int)opponent.cardPositions.size(); ++i) 
-            if(i < (int)opponent.handCards.size())
+            if(i < (int)opponent.handSize())
                 mvwprintw(playWindow, opponent.cardPositions.at(i).y, opponent.cardPositions.at(i).x, opponent.handCards.at(i).sym);
             else
                 mvwaddch(playWindow, opponent.cardPositions.at(i).y, opponent.cardPositions.at(i).x, ' ');

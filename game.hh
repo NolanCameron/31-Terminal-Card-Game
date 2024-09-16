@@ -35,7 +35,7 @@ class Game{
         int playerChooseCard();
         void takeTurns(int&, int&);
         void judgeRound(int, int);
-        void clearPlayerHands();
+        void resetPlayers();
 };
 
 #endif

@@ -36,6 +36,7 @@ class Player{
         void knock();
         void addPoints(int);
         void clearHand();
+        void resetKnock();
 };
 
 class Opponent: public Player{

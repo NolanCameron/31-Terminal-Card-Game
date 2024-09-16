@@ -57,7 +57,7 @@ void Game::startRound(){
 
     getch();
 
-    clearPlayerHands();
+    resetPlayers();
 
     board->resetBoard();
 
@@ -254,9 +254,12 @@ void Game::judgeRound(int got31OrKnocked, int index){
     }
 }
 
-void Game::clearPlayerHands(){
+void Game::resetPlayers(){
+    mainPlayer.resetKnock();
     mainPlayer.clearHand();
-    for(Opponent opponent : opponents)
+    for(Opponent& opponent : opponents){
         opponent.clearHand();
-}
+        opponent.clearHand();
+    }
 
+}
