@@ -2,7 +2,7 @@
 
 This is a simple terminal version of the card game 31.
 
-Dependences:
+Dependencies:
     ncursesw
 
 To run simply download the git repo and in the same directory run the command "make". 
