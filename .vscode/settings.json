@@ -1,0 +1,13 @@
+{
+    "files.associations": {
+        "vector": "cpp",
+        "algorithm": "cpp",
+        "*.tcc": "cpp",
+        "limits": "cpp",
+        "type_traits": "cpp",
+        "fstream": "cpp",
+        "memory": "cpp",
+        "array": "cpp",
+        "string_view": "cpp"
+    }
+}
