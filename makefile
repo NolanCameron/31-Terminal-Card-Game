@@ -12,4 +12,4 @@ $(objects): %.o: %.cc
 	$(CXX) $(CXXFLAGS) -c $^ -o $@
 
 clean:
-	rm ./31
+	rm ./31 *.o

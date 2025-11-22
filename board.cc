@@ -153,7 +153,7 @@ void Board::playerKnockPrompt(int index){
     
     wclear(promptWindow);
     const std::string mainPlayerKnocked = "You Knocked! Press any key to Continue";
-    const std::string opponentKnocked = "Player %d Knocked! Press any key to Continu";
+    const std::string opponentKnocked = "Player %d Knocked! Press any key to Continue";
 
     if(index == 0)
         mvwprintw(promptWindow, 0, (playSpace.width - mainPlayerKnocked.length())/2, mainPlayerKnocked.c_str());
