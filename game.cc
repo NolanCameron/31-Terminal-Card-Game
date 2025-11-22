@@ -47,7 +47,7 @@ void Game::start(){
 
 void Game::startRound(){
 
-    int got31OrKnock;
+    int got31OrKnock; //31 = 0, Knocked = 1
     int index;
     
     takeTurns(got31OrKnock, index);
